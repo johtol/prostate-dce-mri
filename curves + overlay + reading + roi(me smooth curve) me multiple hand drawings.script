@@ -1,0 +1,437 @@
+// write your script here!
+// write your script here!
+
+Interface {
+  Inputs {}
+  Outputs {}
+  Parameters {
+  
+    //Field numSelectedCSOs                     { type = int value = ctx.field("numSelectedCSOs").value = len(lvSelIds)      }
+    
+    Field PKparams {
+      type  = Enum
+      
+      value = "None"
+      items {
+        //        item "Select a PK parameter" {}
+        item None {}
+        item Kep {}
+        item Ktrans {}
+        item Ve{}
+        item Vplasma{}
+      }
+    }
+    
+    Field Layout {
+      type = Enum
+      value = "Axial"
+      
+      items {
+        
+        item "Axial" {}
+        item "Sagittal" {}
+        item "Coronal"  {}
+        item "Row Equal" {}
+       
+      }
+    }
+  
+    Field Layout2 {
+      type  = Enum
+      value = "Axial"
+      
+      items {
+        
+        item "Axial" {}
+        item "Sagittal" {}
+        item "Coronal"  {}
+        //item Cube {}
+        //item "Cube Equal" {}
+        //item "Cube Customized" {}
+        //item Row{  }
+        item "Row Equal" {}
+        //item "Row Axialextra" {}
+       // item Column   {}
+        //item "Column Equal" {}
+      }
+    }
+    
+  }
+}
+
+Commands  {
+  source = "$(LOCAL)/curves + overlay + reading + roi(me smooth curve) me multiple hand drawings.py"
+  //source = "C:/Users/johnnie/PycharmProjects/Scatterplot/dokimes telikes.py"
+ // importPath = "C:/Python27/Lib/site-packages/pyparsing"
+  
+  
+  
+  FieldListener PKparams {
+    command = changePK
+  }
+  
+  FieldListener Layout {
+     command = changeLayout
+   }
+  
+  FieldListener Layout2 {
+    command = changeLayout2
+  }
+  
+} //end of commands
+
+//Commands {
+//  source = "$(LOCAL)/curves + overlay + reading + roi(me smooth curve).py"
+//}
+
+Window "Prostate Cancer Visualization" {
+  
+
+  expandY = True
+  expandX = True
+  w       = 1000 h = 800
+  
+  ScrollView {  
+    
+  hscroller = Auto
+  vscroller = auto
+  //TabView "1: Curves"{
+  
+    //mode = top
+   
+ 
+  
+ 
+   Vertical  {
+  
+    Horizontal{
+      expandY = True
+    
+      Box "Raw Data" {
+        
+        Viewer  "OrthoView2D1.self" {
+          height = 270
+         
+          type  = SoRenderArea
+        
+        }   
+        
+       Horizontal {
+         
+          Field Layout {
+            alignX =Left
+            //title             = PKparams
+            //show              = One 
+            //direction         = Vertical 
+            //border            = Yes 
+            //showItemInternals = No 
+            title      = "Select Layout:"
+            // alignGroup = g1
+          }
+         
+         Button { 
+           alignX  = Auto
+           title   = "Choose a data set" 
+           command = showRawDataPanel
+          
+         }
+         
+      
+       }
+        
+        Horizontal {
+        Field PKparams {
+          alignX = Left
+          //title             = PKparams
+          //show              = One 
+          //direction         = Vertical 
+          //border            = Yes 
+          //showItemInternals = No 
+          title      = "PK parameter:"
+          // alignGroup = g1
+            }
+       
+          Button {
+            alignX  = Auto
+            title   = "Apply ROI"
+            command = applyroi
+            border  = On
+
+          }  
+          
+          
+         Button { 
+            alignX = Auto
+            title = "Set a Colormap" 
+            command = showLutEditorPanel 
+          
+          }
+          
+       
+        } 
+        
+        
+        }
+
+      
+        
+        
+      Box "ROI" {
+        
+        Viewer "OrthoView2D2.self" {
+          height = 300
+         
+          type  = SoRenderArea
+        
+        }
+       
+      Horizontal {
+        Field Layout2 {
+          alignX = Left
+          title  = "Select Layout:"
+          // alignGroup = g1
+        }
+        
+          Button {
+            align  = Right
+            title   = "Delete markers"
+            command = deletemarkers
+            border  = On
+
+          }
+          
+          Button {
+            align  = Right
+            title   = "Delete CSO"
+            command = deletecsos
+            border  = On
+          }
+        
+      }
+          
+          
+        
+          
+        }//end of box roi
+          
+      }//end of panels in first row
+      
+      
+    
+     // Box "PK parameters" {
+        ///width = 200
+      //  layout= Vertical      
+     //   Viewer View2D1.self {
+      //    type = SoRenderArea
+     //   }
+      //  Field PKparams {
+          //title             = PKparams
+          //show              = One 
+          //direction         = Vertical 
+          //border            = Yes 
+          //showItemInternals = No 
+         // title      = "PK parameter:"
+         // alignGroup = g1
+     //   }
+          
+   //   }
+   }   //end of Horizontal 1st row
+    
+    //
+    
+    //dependsOn = ""
+       
+     
+      
+       
+  
+   //2nd row
+    Horizontal {
+    
+      Box "Scatterplot Matrix" {
+      
+        expandY = True expandX = True
+        
+        MatplotlibCanvas  {
+               
+          w       = 600
+          h       = 600
+          expandX = yes
+          expandY = yes
+        
+          name        = canvas
+          initCommand = main
+          //initCommand = exec
+          useToolBar = True
+          
+          }
+   
+      }
+      Horizontal {
+      Box "Marker Intensity Curves" {
+        expandY = Yes 
+        expandX = Yes
+        width = 200
+        height = 600
+      
+        Viewer SoRenderArea.self{
+          type = SoRenderArea
+        
+        }
+   
+      }
+      
+      Box "CSO Intensity Curves" {
+        expandY = Yes
+ 
+        expandX = Yes
+        width   = 200
+        height = 600
+      
+        Viewer SoRenderArea2.self{
+          type = SoRenderArea
+        
+        }
+   
+      }
+   
+     
+      }
+     
+   
+    
+    }//end of 2nd row
+  }//end of vertical
+  
+    
+  //}//end of first tab
+  
+  ////2nd tab
+  //TabView "2: Overlay" {
+  //  mode = top
+  //
+  //  Vertical  {
+  //
+  //    Horizontal{
+  //      expandY = True
+  //
+  //      Box "Raw Data" {
+  //
+  //        Viewer  OrthoView2D.self {
+  //          height = 300
+  //
+  //          type  = SoRenderArea
+  //
+  //        }   
+  //      }
+  //        Box "PK parameters" {
+  //          ///width = 200
+  //          height = 220
+  //          layout= Vertical      
+  //          Viewer View2D1.self {
+  //            type = SoRenderArea
+  //          }
+  //          Field PKparams {
+  //            //title             = PKparams
+  //            //show              = One 
+  //            //direction         = Vertical 
+  //            //border            = Yes 
+  //            //showItemInternals = No 
+  //            title      = "PK parameter:"
+  //            alignGroup = g1
+  //          }
+  //
+  //        }   
+  //
+  //
+  //      }//end of horizontal 1st row in 2nd tab
+  //
+  //    Horizontal {
+  //
+  //      Box "LUT Editor" {
+  //        expandX = No
+  //        expandY = No
+  //        h= 300
+  //        w = 500
+  //        alignX = Left
+  //        //visibleOn = "lutType=='Editor'"
+  //        Panel { module = SoLUTEditor1 panel = editor }
+  //        Horizontal { expandX = no
+  //          Button SoLUTEditor1.resetToRamp {}
+  //          Button { title = "Advanced..." command = showLutEditorPanel }
+  //        }
+  //      }
+  //
+  //
+  //    }
+  //
+  //
+  //  }//end of vertical 2nd tab
+  //
+  //
+  //}//end 2nd tab
+
+    
+}//end of window
+
+
+Window LutEditor {
+  title = "Lut Editor"
+  Vertical {
+    Box Editor {
+      Panel { module = SoLUTEditor1 panel = editor }
+    }
+    Box Settings {
+      Field SoLUTEditor1.relativeLut {}
+      Field SoLUTEditor1.alphaFactor { slider = yes }
+      Field SoLUTEditor1.colorInterpolation {}
+    }
+    Box Range {
+      Panel { module = SoLUTEditor1 panel = range }
+    }
+  }
+}
+
+Window ChooseADataSet {
+  title = "Choose a Data Set"
+  Vertical {
+    Horizontal {
+    
+      Field Raw_Data.source {}
+      Button {
+        title   = "Browse"
+        tooltip = "Provides a  browser for the directory (tree) to be parsed for DICOM files to be composed to volumes."
+        command = expandDirectoryName 
+      }
+     
+    } 
+        Field Raw_Data.fullPath {}
+        ListView Raw_Data.volumeInfos {}
+        TextView Raw_Data.console {}
+    Box Buttons {  alignX = Left   expandX = Yes
+      alignX  = Right
+      Horizontal {
+        Label "Do:" {}
+        
+       
+        Button {
+          title   = "Clear Log + Import"
+          tooltip = "Clears console and starts importing data with Dicom Processor Library (DPL). "
+          command = clearLogAndImport
+        }
+      
+      }        
+       
+    }
+    Horizontal {
+      expandX =  Yes
+      ProgressBar Raw_Data.progress {}
+      Field Raw_Data.progressInfo {}
+    }
+   
+  }
+
+}//end window ChooseADataSet
+//Window { adds 2nd tab in the panel
+//}
+// write your script here!
